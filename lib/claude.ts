@@ -3,7 +3,11 @@ import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { z } from "zod";
 import type { Mistake, Turn } from "./db";
 
-const client = new Anthropic();
+// Keys that aren't scoped to a workspace must name one on every request.
+const workspaceId = process.env.ANTHROPIC_WORKSPACE_ID?.trim();
+const client = new Anthropic(
+  workspaceId ? { defaultHeaders: { "anthropic-workspace-id": workspaceId } } : {},
+);
 
 const TUTOR_MODEL = "claude-opus-5-5";
 const TAGGER_MODEL = "claude-haiku-5-5";

@@ -26,6 +26,7 @@ cp .env.example .env.local
 Fill in `.env.local`:
 
 - `ANTHROPIC_API_KEY`: from console.anthropic.com
+- `ANTHROPIC_WORKSPACE_ID`: only if Claude errors with "This API key is not scoped to a workspace". Copy the workspace ID (it starts with `wrkspc_`) from Settings, Workspaces in the Anthropic console
 - `ELEVENLABS_API_KEY`: from elevenlabs.io, Profile, API keys
 - `ELEVENLABS_VOICE_ID`: in ElevenLabs, open the Voice Library, filter by Spanish and a Mexican accent, add a voice you like to My Voices, then copy its voice ID
 
