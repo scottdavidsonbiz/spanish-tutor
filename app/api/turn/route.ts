@@ -6,13 +6,26 @@ import { track } from "@/lib/pending";
 
 export const runtime = "nodejs";
 
-/** One exchange: Scott's recording in, the tutor's reply out. */
+/**
+ * One exchange: Scott's recording in, the tutor's reply out.
+ * With `silent=1` and no audio, Scott didn't answer and Sofía re-prompts.
+ */
 export async function POST(req: Request) {
   const form = await req.formData();
   const sessionId = Number(form.get("sessionId"));
+  if (!getSession(sessionId)) {
+    return NextResponse.json({ error: "Missing session" }, { status: 400 });
+  }
+
+  if (form.get("silent") === "1") {
+    const replyText = await tutorReply(getTurns(sessionId), true);
+    const tutorTurnId = addTurn(sessionId, "tutor", replyText);
+    return NextResponse.json({ tutor: { id: tutorTurnId, text: replyText } });
+  }
+
   const audio = form.get("audio");
-  if (!getSession(sessionId) || !(audio instanceof Blob)) {
-    return NextResponse.json({ error: "Missing session or audio" }, { status: 400 });
+  if (!(audio instanceof Blob)) {
+    return NextResponse.json({ error: "Missing audio" }, { status: 400 });
   }
 
   const learnerText = await transcribe(audio);

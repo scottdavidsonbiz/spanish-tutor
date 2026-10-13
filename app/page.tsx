@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <>
       <h1>Práctica con Sofía</h1>
-      <p className="muted">Hold the button (or the spacebar) and talk. Sofía answers out loud.</p>
+      <p className="muted">Sofía leads the conversation out loud. Just talk when she asks you something.</p>
       <StartButton />
 
       <h2>Past sessions</h2>

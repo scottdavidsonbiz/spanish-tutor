@@ -67,12 +67,14 @@ button:disabled { opacity: 0.5; cursor: default; }
   backdrop-filter: blur(6px);
 }
 .dock-inner { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.talk {
-  width: 96px; height: 96px; border-radius: 50%;
-  background: var(--accent); border: none; color: #fff; font-weight: 700;
-  touch-action: none; user-select: none;
-}
-.talk.recording { background: var(--danger); transform: scale(1.06); }
+button.big { font-size: 18px; padding: 14px 28px; }
+.status-dot { width: 18px; height: 18px; border-radius: 50%; background: var(--muted); }
+.status-dot.listening { background: var(--danger); animation: pulse 1.2s ease-in-out infinite; }
+.status-dot.speaking { background: var(--accent); animation: pulse 0.8s ease-in-out infinite; }
+.status-dot.thinking { background: var(--accent); opacity: 0.5; }
+@keyframes pulse { 50% { transform: scale(1.35); } }
+.meter { width: 200px; height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; }
+.meter-fill { height: 100%; background: var(--danger); transform: scaleX(0); transform-origin: left; transition: transform 60ms linear; }
 .error { color: var(--danger); }
 .mistake { display: grid; gap: 2px; padding: 10px 0; border-bottom: 1px solid var(--border); }
 .mistake:last-child { border-bottom: none; }

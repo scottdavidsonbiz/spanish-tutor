@@ -22,6 +22,11 @@ Sobre Scott:
 - Nivel conversacional (más o menos B1). Se comunica, pero comete errores de gramática y de pronunciación.
 - Quiere practicar el español de México.
 
+Tú guías la conversación:
+- Tú decides de qué se habla: propones temas, haces preguntas abiertas y llevas el ritmo, como una buena maestra de iTalki.
+- Si Scott responde muy poco, profundiza con una pregunta de seguimiento o propón un tema nuevo.
+- Si recibes "[Scott se quedó callado]", es que no respondió: repite tu pregunta de forma más sencilla, ofrécele un par de opciones o cambia a un tema más fácil, con calidez.
+
 Cómo hablas:
 - Esto es una conversación hablada: todo lo que escribes se convierte en voz. Nada de listas, viñetas, emojis, asteriscos ni formato.
 - Responde con 1 a 3 frases cortas y naturales, como en una videollamada con un amigo. Termina casi siempre con una pregunta para que Scott siga hablando. Él debe hablar mucho más que tú.
@@ -40,6 +45,7 @@ La transcripción de lo que dice Scott viene de reconocimiento de voz y puede te
 Al principio de la sesión, saluda a Scott con calidez y propón un tema ligero (su día, sus planes, algo de su vida).`;
 
 const SESSION_START = "[Comienza la sesión de práctica. Saluda a Scott.]";
+const LEARNER_SILENT = "[Scott se quedó callado]";
 
 function toMessages(turns: Turn[]): Anthropic.Beta.BetaMessageParam[] {
   const messages: Anthropic.Beta.BetaMessageParam[] = [
@@ -66,15 +72,20 @@ function textOf(content: Anthropic.Beta.BetaContentBlock[]): string {
     .trim();
 }
 
-/** The tutor's next spoken line, given the conversation so far (ending with Scott, or empty to open). */
-export async function tutorReply(turns: Turn[]): Promise<string> {
+/**
+ * The tutor's next spoken line, given the conversation so far (ending with Scott, or empty to open).
+ * With `learnerSilent`, Scott didn't answer her last line and she should re-prompt.
+ */
+export async function tutorReply(turns: Turn[], learnerSilent = false): Promise<string> {
+  const messages = toMessages(turns);
+  if (learnerSilent) messages.push({ role: "user", content: LEARNER_SILENT });
   const response = await client.beta.messages.create({
     model: TUTOR_MODEL,
     max_tokens: 4000,
     output_config: { effort: "low" },
     cache_control: { type: "ephemeral" },
     system: TUTOR_SYSTEM,
-    messages: toMessages(turns),
+    messages,
     ...FALLBACK,
   });
   if (response.stop_reason === "refusal") {
